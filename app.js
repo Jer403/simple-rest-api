@@ -1,14 +1,23 @@
-const express = require("express");
-const crypto = require("node:crypto")
-const cors = require('cors')
-const movies = require("./movies.json");
-const { validateMovie, validatePatialMovie } = require("./schemas/movies.js")
+import express, { json } from "express";
+import { randomUUID } from "node:crypto";
+import cors from 'cors';
+import { validateMovie, validatePatialMovie } from "./schemas/movies.js";
+
+// Como leer un json en ESModules
+// import fs from "node:fs"
+// const movies = JSON.parse(fs.readFileSync("./movies.json","utf-8"))
+
+// como leer un json en ESModules recomendado por ahora
+import { createRequire } from "node:module"
+const require = createRequire(import.meta.url)
+const movies = require("./movies.json")
+
+
 
 const app = express();
-
 app.disable("x-powered-by");
 
-app.use(express.json())
+app.use(json())
 app.use(cors({
     origin: (origin, callback) => {
         const ACCEPTED_ORIGINS = [
@@ -74,7 +83,7 @@ app.post("/movies", (req, res) => {
     }
 
     const newMovie = {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         ...result.data
     }
 
